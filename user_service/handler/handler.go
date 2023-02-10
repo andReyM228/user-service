@@ -2,7 +2,9 @@ package handler
 
 import (
 	"encoding/json"
+
 	"github.com/gofiber/fiber/v2"
+
 	"user_service/domain"
 	"user_service/repository"
 )
