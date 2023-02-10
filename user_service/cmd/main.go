@@ -48,10 +48,10 @@ func main() {
 func (a *App) initHTTP() {
 	a.router = fiber.New()
 
-	a.router.Get("v1/user-service", a.userHandler.Get)
-	a.router.Post("v1/user-service", a.userHandler.Create)
-	a.router.Put("v1/user-service", a.userHandler.Update)
-	a.router.Delete("v1/user-service", a.userHandler.Delete)
+	a.router.Get("v1/user-service/:id", a.userHandler.Get)
+	a.router.Post("v1/user-service/user", a.userHandler.Create)
+	a.router.Put("v1/user-service/user", a.userHandler.Update)
+	a.router.Delete("v1/user-service/user/:id", a.userHandler.Delete)
 
 	_ = a.router.Listen(":3000")
 }
