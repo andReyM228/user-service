@@ -1,4 +1,4 @@
-package handler
+package users
 
 import (
 	"encoding/json"
@@ -6,14 +6,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"user_service/domain"
-	"user_service/repository"
+	"user_service/repository/users"
 )
 
 type Handler struct {
-	userRepo repository.Repository
+	userRepo users.Repository
 }
 
-func NewHandler(repo repository.Repository) Handler {
+func NewHandler(repo users.Repository) Handler {
 	return Handler{
 		userRepo: repo,
 	}
