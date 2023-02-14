@@ -61,10 +61,10 @@ func (a *App) initHTTP() {
 	a.router.Put("v1/user-service/user", a.userHandler.Update)
 	a.router.Delete("v1/user-service/user/:id", a.userHandler.Delete)
 
-	a.router.Get("v1/user-service/car/:id", a.carHandler.Get)
-	a.router.Post("v1/user-service/car", a.carHandler.Create)
-	a.router.Put("v1/user-service/car", a.carHandler.Update)
-	a.router.Delete("v1/user-service/car/:id", a.carHandler.Delete)
+	a.router.Get("v1/car-service/car/:id", a.carHandler.Get)
+	a.router.Post("v1/car-service/car", a.carHandler.Create)
+	a.router.Put("v1/car-service/car", a.carHandler.Update)
+	a.router.Delete("v1/car-service/car/:id", a.carHandler.Delete)
 
 	_ = a.router.Listen(":3000")
 }
