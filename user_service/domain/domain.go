@@ -10,3 +10,10 @@ type User struct {
 	Email     string
 	CreatedAt time.Time `db:"created_at"`
 }
+
+type Car struct {
+	ID        int
+	Name      string
+	Model     string
+	CreatedAt time.Time `db:"created_at"`
+}

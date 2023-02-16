@@ -4,9 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
-	"user_service/handler"
-	"user_service/repository"
+	cars2 "user_service/handler/cars"
+	users2 "user_service/handler/users"
+	"user_service/repository/cars"
+	"user_service/repository/users"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
@@ -22,8 +23,10 @@ const (
 )
 
 type App struct {
-	userRepo    repository.Repository
-	userHandler handler.Handler
+	userRepo    users.Repository
+	userHandler users2.Handler
+	carRepo     cars.Repository
+	carHandler  cars2.Handler
 
 	router *fiber.App
 }
@@ -34,12 +37,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	userRepo := repository.NewRepository(db)
-	userHandler := handler.NewHandler(userRepo)
+	userRepo := users.NewRepository(db)
+	userHandler := users2.NewHandler(userRepo)
+
+	carRepo := cars.NewRepository(db)
+	carsHandler := cars2.NewHandler(carRepo)
 
 	app := App{
 		userRepo:    userRepo,
 		userHandler: userHandler,
+		carRepo:     carRepo,
+		carHandler:  carsHandler,
 	}
 
 	app.initHTTP()
@@ -48,10 +56,15 @@ func main() {
 func (a *App) initHTTP() {
 	a.router = fiber.New()
 
-	a.router.Get("v1/user-service/:id", a.userHandler.Get)
+	a.router.Get("v1/user-service/user/:id", a.userHandler.Get)
 	a.router.Post("v1/user-service/user", a.userHandler.Create)
 	a.router.Put("v1/user-service/user", a.userHandler.Update)
 	a.router.Delete("v1/user-service/user/:id", a.userHandler.Delete)
+
+	a.router.Get("v1/car-service/car/:id", a.carHandler.Get)
+	a.router.Post("v1/car-service/car", a.carHandler.Create)
+	a.router.Put("v1/car-service/car", a.carHandler.Update)
+	a.router.Delete("v1/car-service/car/:id", a.carHandler.Delete)
 
 	_ = a.router.Listen(":3000")
 }
