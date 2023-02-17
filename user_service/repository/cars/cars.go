@@ -35,7 +35,7 @@ func (r Repository) Update(car domain.Car) error {
 }
 
 func (r Repository) Create(car domain.Car) error {
-	if _, err := r.db.Exec("INSERT INTO users (name, model) VALUES ($1, $2)", car.Name, car.Model); err != nil {
+	if _, err := r.db.Exec("INSERT INTO cars (name, model) VALUES ($1, $2)", car.Name, car.Model); err != nil {
 		return err
 	}
 
@@ -49,5 +49,3 @@ func (r Repository) Delete(id int64) error {
 
 	return nil
 }
-
-
