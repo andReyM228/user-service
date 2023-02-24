@@ -3,10 +3,12 @@ package cars
 import (
 	"database/sql"
 	"errors"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
-	"user_service/domain"
-	"user_service/repository"
+
+	"user_service/internal/domain"
+	"user_service/internal/repository"
 )
 
 type Repository struct {

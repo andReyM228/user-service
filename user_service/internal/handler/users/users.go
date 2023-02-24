@@ -1,20 +1,22 @@
-package cars
+package users
 
 import (
 	"encoding/json"
+
 	"github.com/gofiber/fiber/v2"
-	"user_service/domain"
-	"user_service/handler"
-	"user_service/repository/cars"
+
+	"user_service/internal/domain"
+	"user_service/internal/handler"
+	"user_service/internal/repository/users"
 )
 
 type Handler struct {
-	carRepo cars.Repository
+	userRepo users.Repository
 }
 
-func NewHandler(repo cars.Repository) Handler {
+func NewHandler(repo users.Repository) Handler {
 	return Handler{
-		carRepo: repo,
+		userRepo: repo,
 	}
 }
 
@@ -24,12 +26,12 @@ func (h Handler) Get(ctx *fiber.Ctx) error {
 		return handler.HandleError(ctx, err)
 	}
 
-	car, err := h.carRepo.Get(int64(id))
+	user, err := h.userRepo.Get(int64(id))
 	if err != nil {
 		return handler.HandleError(ctx, err)
 	}
 
-	payload, err := json.Marshal(car)
+	payload, err := json.Marshal(user)
 	if err != nil {
 		return handler.HandleError(ctx, err)
 	}
@@ -38,12 +40,12 @@ func (h Handler) Get(ctx *fiber.Ctx) error {
 }
 
 func (h Handler) Update(ctx *fiber.Ctx) error {
-	var car domain.Car
-	if err := ctx.BodyParser(&car); err != nil {
+	var user domain.User
+	if err := ctx.BodyParser(&user); err != nil {
 		return handler.HandleError(ctx, err)
 	}
 
-	if err := h.carRepo.Update(car); err != nil {
+	if err := h.userRepo.Update(user); err != nil {
 		return handler.HandleError(ctx, err)
 	}
 
@@ -51,12 +53,12 @@ func (h Handler) Update(ctx *fiber.Ctx) error {
 }
 
 func (h Handler) Create(ctx *fiber.Ctx) error {
-	var car domain.Car
-	if err := ctx.BodyParser(&car); err != nil {
+	var user domain.User
+	if err := ctx.BodyParser(&user); err != nil {
 		return handler.HandleError(ctx, err)
 	}
 
-	if err := h.carRepo.Create(car); err != nil {
+	if err := h.userRepo.Create(user); err != nil {
 		return handler.HandleError(ctx, err)
 	}
 
@@ -69,7 +71,7 @@ func (h Handler) Delete(ctx *fiber.Ctx) error {
 		return handler.HandleError(ctx, err)
 	}
 
-	if err := h.carRepo.Delete(int64(id)); err != nil {
+	if err := h.userRepo.Delete(int64(id)); err != nil {
 		return handler.HandleError(ctx, err)
 	}
 
