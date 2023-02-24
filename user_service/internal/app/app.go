@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"user_service/internal/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
@@ -14,15 +15,8 @@ import (
 	"user_service/internal/repository/users"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "postgres"
-	dbname   = "user_service"
-)
-
 type App struct {
+	config      config.Config
 	serviceName string
 	userRepo    users.Repository
 	userHandler users_handler.Handler
@@ -41,6 +35,7 @@ func New(name string) App {
 }
 
 func (a *App) Run() {
+	a.populateConfig()
 	a.initLogger()
 	a.initDatabase()
 	a.initRepos()
@@ -62,7 +57,7 @@ func (a *App) initHTTP() {
 	a.router.Delete("v1/user-service/car/:id", a.carHandler.Delete)
 
 	a.logger.Debug("fiber api started")
-	_ = a.router.Listen(":3000")
+	_ = a.router.Listen(fmt.Sprintf(":%d", a.config.HTTP.Port))
 }
 
 func (a *App) initDatabase() {
@@ -70,7 +65,7 @@ func (a *App) initDatabase() {
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		a.config.DB.Host, a.config.DB.Port, a.config.DB.User, a.config.DB.Password, a.config.DB.DBname)
 
 	db, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {
@@ -100,4 +95,13 @@ func (a *App) initHandlers() {
 	a.userHandler = users_handler.NewHandler(a.userRepo)
 	a.carHandler = cars_handler.NewHandler(a.carRepo)
 	a.logger.Debug("handlers created")
+}
+
+func (a *App) populateConfig() {
+	cfg, err := config.ParseConfig()
+	if err != nil {
+		log.Fatal()
+	}
+
+	a.config = cfg
 }
