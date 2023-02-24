@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"log"
 	cars2 "user_service/handler/cars"
 	users2 "user_service/handler/users"
@@ -37,10 +38,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	userRepo := users.NewRepository(db)
+	logger := initLogger()
+
+	logger.Infoln("start api")
+
+	userRepo := users.NewRepository(db, logger)
 	userHandler := users2.NewHandler(userRepo)
 
-	carRepo := cars.NewRepository(db)
+	carRepo := cars.NewRepository(db, logger)
 	carsHandler := cars2.NewHandler(carRepo)
 
 	app := App{
@@ -84,4 +89,8 @@ func initDatabase() (*sqlx.DB, error) {
 	}
 
 	return sqlx.NewDb(db, ""), nil
+}
+
+func initLogger() *logrus.Logger {
+	return logrus.New()
 }
