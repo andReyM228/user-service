@@ -1,6 +1,8 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	ID        int
@@ -8,6 +10,7 @@ type User struct {
 	Surname   string
 	Phone     string
 	Email     string
+	Cars      []Car
 	CreatedAt time.Time `db:"created_at"`
 }
 
@@ -15,5 +18,6 @@ type Car struct {
 	ID        int
 	Name      string
 	Model     string
+	Price     int64
 	CreatedAt time.Time `db:"created_at"`
 }

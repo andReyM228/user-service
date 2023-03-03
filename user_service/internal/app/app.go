@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"user_service/internal/config"
+	"user_service/internal/repository/user_cars"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
@@ -16,14 +17,15 @@ import (
 )
 
 type App struct {
-	config      config.Config
-	serviceName string
-	userRepo    users.Repository
-	userHandler users_handler.Handler
-	carRepo     cars.Repository
-	carHandler  cars_handler.Handler
-	logger      *logrus.Logger
-	db          *sqlx.DB
+	config       config.Config
+	serviceName  string
+	userRepo     users.Repository
+	userHandler  users_handler.Handler
+	carRepo      cars.Repository
+	carHandler   cars_handler.Handler
+	userCarsRepo user_cars.Repository
+	logger       *logrus.Logger
+	db           *sqlx.DB
 
 	router *fiber.App
 }
@@ -86,6 +88,7 @@ func (a *App) initLogger() {
 }
 
 func (a *App) initRepos() {
+	a.userCarsRepo = user_cars.NewRepository(a.db, a.logger)
 	a.userRepo = users.NewRepository(a.db, a.logger)
 	a.carRepo = cars.NewRepository(a.db, a.logger)
 	a.logger.Debug("repos created")

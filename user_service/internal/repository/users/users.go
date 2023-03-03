@@ -25,6 +25,7 @@ func NewRepository(database *sqlx.DB, log *logrus.Logger) Repository {
 
 func (r Repository) Get(id int64) (domain.User, error) {
 	var user domain.User
+	var cars []domain.Car
 
 	if err := r.db.Get(&user, "SELECT * FROM users WHERE id = $1", id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -36,6 +37,23 @@ func (r Repository) Get(id int64) (domain.User, error) {
 		return domain.User{}, repository.InternalServerError{}
 	}
 
+	if err := r.db.Select(&cars, `
+		SELECT cars.*
+		FROM cars
+		JOIN user_cars ON user_cars.car_id = cars.id
+		JOIN users ON users.id = user_cars.user_id
+		WHERE users.id = $1;
+		`, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			r.log.Infoln(err)
+			return domain.User{}, repository.NotFound{NotFound: "users cars"}
+		}
+
+		r.log.Errorln(err)
+		return domain.User{}, repository.InternalServerError{}
+	}
+
+	user.Cars = cars
 	return user, nil
 }
 
