@@ -8,20 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
-
-	cars_handler "user_service/internal/handler/cars"
-	users_handler "user_service/internal/handler/users"
-	"user_service/internal/repository/cars"
-	"user_service/internal/repository/users"
 )
 
 type App struct {
 	config      config.Config
 	serviceName string
-	userRepo    users.Repository
-	userHandler users_handler.Handler
-	carRepo     cars.Repository
-	carHandler  cars_handler.Handler
 	logger      *logrus.Logger
 	db          *sqlx.DB
 
@@ -46,15 +37,7 @@ func (a *App) Run() {
 func (a *App) initHTTP() {
 	a.router = fiber.New()
 
-	a.router.Get("v1/user-service/user/:id", a.userHandler.Get)
-	a.router.Post("v1/user-service/user", a.userHandler.Create)
-	a.router.Put("v1/user-service/user", a.userHandler.Update)
-	a.router.Delete("v1/user-service/user/:id", a.userHandler.Delete)
-
-	a.router.Get("v1/user-service/car/:id", a.carHandler.Get)
-	a.router.Post("v1/user-service/car", a.carHandler.Create)
-	a.router.Put("v1/user-service/car", a.carHandler.Update)
-	a.router.Delete("v1/user-service/car/:id", a.carHandler.Delete)
+	//роуты
 
 	a.logger.Debug("fiber api started")
 	_ = a.router.Listen(fmt.Sprintf(":%d", a.config.HTTP.Port))
@@ -86,14 +69,13 @@ func (a *App) initLogger() {
 }
 
 func (a *App) initRepos() {
-	a.userRepo = users.NewRepository(a.db, a.logger)
-	a.carRepo = cars.NewRepository(a.db, a.logger)
+	//пример: a.userRepo = users.NewRepository(a.db, a.logger)
+
 	a.logger.Debug("repos created")
 }
 
 func (a *App) initHandlers() {
-	a.userHandler = users_handler.NewHandler(a.userRepo)
-	a.carHandler = cars_handler.NewHandler(a.carRepo)
+	//пример: a.userHandler = users_handler.NewHandler(a.userRepo)
 	a.logger.Debug("handlers created")
 }
 

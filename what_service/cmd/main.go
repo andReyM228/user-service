@@ -6,7 +6,7 @@ import (
 	"user_service/internal/app"
 )
 
-const serviceName = "user_service"
+const serviceName = "what_service"
 
 func main() {
 	a := app.New(serviceName)

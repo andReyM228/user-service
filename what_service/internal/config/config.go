@@ -26,7 +26,7 @@ type (
 )
 
 func ParseConfig() (Config, error) {
-	file, err := os.ReadFile("C:\\Users\\admin\\GolandProjects\\ciberone_1\\user_service\\cmd\\config.yaml")
+	file, err := os.ReadFile("C:\\Users\\admin\\GolandProjects\\ciberone_2\\what_service\\cmd\\config.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}
