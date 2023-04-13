@@ -9,6 +9,7 @@ import (
 	"user_service/internal/repository/transfers"
 	"user_service/internal/repository/user_cars"
 	"user_service/internal/service/car_trading"
+	users_service "user_service/internal/service/users"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
@@ -28,6 +29,7 @@ type App struct {
 	carRepo           cars.Repository
 	carHandler        cars_handler.Handler
 	carTradingService car_trading.Service
+	userService       users_service.Service
 	userCarsRepo      user_cars.Repository
 	transferRepo      transfers.Repository
 	carTradingHandler car_trading_handler.Handler
@@ -108,7 +110,7 @@ func (a *App) initRepos() {
 }
 
 func (a *App) initHandlers() {
-	a.userHandler = users_handler.NewHandler(a.userRepo)
+	a.userHandler = users_handler.NewHandler(a.userRepo, a.userService)
 	a.carHandler = cars_handler.NewHandler(a.carRepo)
 	a.carTradingHandler = car_trading_handler.NewHandler(a.carTradingService)
 	a.logger.Debug("handlers created")
@@ -116,6 +118,7 @@ func (a *App) initHandlers() {
 
 func (a *App) initServices() {
 	a.carTradingService = car_trading.NewService(a.userRepo, a.carRepo, a.userCarsRepo, a.transferRepo, a.logger)
+	a.userService = users_service.NewService(a.userRepo, a.logger)
 
 	a.logger.Debug("services created")
 }

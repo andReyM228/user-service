@@ -2,6 +2,7 @@ package car_trading
 
 import (
 	"github.com/sirupsen/logrus"
+	"user_service/internal/domain"
 	"user_service/internal/repository/cars"
 	"user_service/internal/repository/transfers"
 	"user_service/internal/repository/user_cars"
@@ -29,7 +30,7 @@ func NewService(users users.Repository, cars cars.Repository, userCars user_cars
 }
 
 func (s Service) BuyCar(userID, carID int64) error {
-	user, err := s.users.Get(userID)
+	user, err := s.users.Get(domain.FieldID, userID)
 	if err != nil {
 		s.log.Errorln(err)
 		return err

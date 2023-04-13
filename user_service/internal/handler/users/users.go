@@ -2,6 +2,7 @@ package users
 
 import (
 	"encoding/json"
+	users_service "user_service/internal/service/users"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -11,12 +12,14 @@ import (
 )
 
 type Handler struct {
-	userRepo users.Repository
+	userRepo    users.Repository
+	userService users_service.Service
 }
 
-func NewHandler(repo users.Repository) Handler {
+func NewHandler(repo users.Repository, service users_service.Service) Handler {
 	return Handler{
-		userRepo: repo,
+		userRepo:    repo,
+		userService: service,
 	}
 }
 
@@ -26,7 +29,7 @@ func (h Handler) Get(ctx *fiber.Ctx) error {
 		return handler.HandleError(ctx, err)
 	}
 
-	user, err := h.userRepo.Get(int64(id))
+	user, err := h.userRepo.Get(domain.FieldID, id)
 	if err != nil {
 		return handler.HandleError(ctx, err)
 	}
@@ -58,7 +61,7 @@ func (h Handler) Create(ctx *fiber.Ctx) error {
 		return handler.HandleError(ctx, err)
 	}
 
-	if err := h.userRepo.Create(user); err != nil {
+	if err := h.userService.Registration(user); err != nil {
 		return handler.HandleError(ctx, err)
 	}
 
