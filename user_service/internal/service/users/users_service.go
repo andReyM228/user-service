@@ -4,6 +4,8 @@ import (
 	"errors"
 	"github.com/sirupsen/logrus"
 	"user_service/internal/domain"
+	"user_service/internal/domain/errs"
+	"user_service/internal/repository"
 	"user_service/internal/repository/cars"
 	"user_service/internal/repository/transfers"
 	"user_service/internal/repository/user_cars"
@@ -27,11 +29,32 @@ func NewService(users users.Repository, log *logrus.Logger) Service {
 	}
 }
 
-func (s Service) Login(chatID int64, password string) error {
+func (s Service) Login(chatID int64, password string) (int64, error) {
+	user, err := s.users.Get(domain.FieldChatID, chatID)
+	if err != nil {
+		if errors.As(err, &repository.NotFound{}) {
+			return 0, errs.NotFoundError{What: "user"}
+		}
 
-	return nil
+		s.log.Error(err)
+
+		return 0, errs.InternalError{}
+	}
+
+	if password != user.Password {
+		return 0, errs.Unauthorized{Cause: "wrong password"}
+	}
+
+	return int64(user.ID), nil
 }
 
+/*
+для логина
+1. попробовать получить пользователя по chatID.
+2. если его нет, то возвращаем ошибку not found.
+3. если он есть и мы его получили, то сравниваем пароль в бд с паролем который ввёл пользователь.
+4. если пароли не совпали, то возвращаем ошибку unauthorized.
+*/
 func (s Service) Registration(user domain.User) error {
 	_, err := s.users.Get(domain.FieldChatID, user.ChatID)
 	if err == nil {
@@ -56,4 +79,3 @@ func (s Service) Registration(user domain.User) error {
 1. сначала юзер нажимает /start, после этого ему выдаётся поле для ввода своих данных
 2. мы должны проверить существует ли такой юзер. Если юзер существует, то вернуть сообщение "такой юзер уже существует", если не существует то создаём этого юзера
 */
-

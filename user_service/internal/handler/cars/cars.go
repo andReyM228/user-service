@@ -2,8 +2,9 @@ package cars
 
 import (
 	"encoding/json"
-
+	"github.com/andReyM228/lib/auth"
 	"github.com/gofiber/fiber/v2"
+	"user_service/internal/domain/errs"
 
 	"user_service/internal/domain"
 	"user_service/internal/handler"
@@ -21,6 +22,15 @@ func NewHandler(repo cars.Repository) Handler {
 }
 
 func (h Handler) Get(ctx *fiber.Ctx) error {
+	token, err := handler.GetToken(ctx)
+	if err != nil {
+		return handler.HandleError(ctx, err)
+	}
+
+	if err := auth.VerifyToken(token); err != nil {
+		return errs.Unauthorized{Cause: err.Error()}
+	}
+
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		return handler.HandleError(ctx, err)

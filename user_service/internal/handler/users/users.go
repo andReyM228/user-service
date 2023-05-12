@@ -2,6 +2,7 @@ package users
 
 import (
 	"encoding/json"
+	"user_service/internal/domain/errs"
 	users_service "user_service/internal/service/users"
 
 	"github.com/gofiber/fiber/v2"
@@ -79,4 +80,27 @@ func (h Handler) Delete(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.SendStatus(fiber.StatusOK)
+}
+
+func (h Handler) Login(ctx *fiber.Ctx) error {
+	var request loginRequest
+	if err := ctx.BodyParser(&request); err != nil {
+		return handler.HandleError(ctx, err)
+	}
+
+	if request.ChatID == 0 || request.Password == "" {
+		return handler.HandleError(ctx, errs.BadRequestError{Cause: "wrong body"})
+	}
+
+	userID, err := h.userService.Login(request.ChatID, request.Password)
+	if err != nil {
+		return handler.HandleError(ctx, err)
+	}
+
+	payload, err := json.Marshal(loginResponse{userID})
+	if err != nil {
+		return handler.HandleError(ctx, err)
+	}
+
+	return ctx.Send(payload)
 }

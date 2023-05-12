@@ -3,6 +3,7 @@ module user_service
 go 1.19
 
 require (
+	github.com/andReyM228/lib/auth v1.0.0
 	github.com/gofiber/fiber/v2 v2.42.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.2.0
@@ -12,6 +13,7 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/klauspost/compress v1.15.15 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

@@ -64,6 +64,7 @@ func (a *App) initHTTP() {
 
 	a.router.Get("v1/user-service/user/:id", a.userHandler.Get)
 	a.router.Post("v1/user-service/user", a.userHandler.Create)
+	a.router.Post("v1/user-service/user/login", a.userHandler.Login)
 	a.router.Put("v1/user-service/user", a.userHandler.Update)
 	a.router.Delete("v1/user-service/user/:id", a.userHandler.Delete)
 
