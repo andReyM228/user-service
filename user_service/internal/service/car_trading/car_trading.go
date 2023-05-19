@@ -1,7 +1,7 @@
 package car_trading
 
 import (
-	"github.com/sirupsen/logrus"
+	"github.com/andReyM228/lib/log"
 	"user_service/internal/domain"
 	"user_service/internal/repository/cars"
 	"user_service/internal/repository/transfers"
@@ -16,10 +16,10 @@ type Service struct {
 	cars      cars.Repository
 	userCars  user_cars.Repository
 	transfers transfers.Repository
-	log       *logrus.Logger
+	log       log.Logger
 }
 
-func NewService(users users.Repository, cars cars.Repository, userCars user_cars.Repository, transfers transfers.Repository, log *logrus.Logger) Service {
+func NewService(users users.Repository, cars cars.Repository, userCars user_cars.Repository, transfers transfers.Repository, log log.Logger) Service {
 	return Service{
 		users:     users,
 		cars:      cars,
@@ -32,28 +32,28 @@ func NewService(users users.Repository, cars cars.Repository, userCars user_cars
 func (s Service) BuyCar(userID, carID int64) error {
 	user, err := s.users.Get(domain.FieldID, userID)
 	if err != nil {
-		s.log.Errorln(err)
+		s.log.Error(err.Error())
 		return err
 	}
 
 	car, err := s.cars.Get(carID)
 	if err != nil {
-		s.log.Errorln(err)
+		s.log.Error(err.Error())
 		return err
 	}
 
-	s.log.Infoln("Sending transfer")
+	s.log.Info("Sending transfer")
 	if err := s.transfers.Transfer(user.ID, systemUser, int(car.Price)); err != nil {
-		s.log.Errorln(err)
+		s.log.Error(err.Error())
 		return err
 	}
-	s.log.Infoln("Transfer sent")
+	s.log.Info("Transfer sent")
 
 	if err := s.userCars.Create(user.ID, car.ID); err != nil {
-		s.log.Errorln(err)
+		s.log.Error(err.Error())
 		return err
 	}
-	s.log.Infoln("Car sent")
+	s.log.Info("Car sent")
 
 	return nil
 }

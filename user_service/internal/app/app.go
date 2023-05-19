@@ -2,7 +2,7 @@ package app
 
 import (
 	"fmt"
-	"log"
+	"github.com/andReyM228/lib/log"
 	"net/http"
 	"user_service/internal/config"
 	car_trading_handler "user_service/internal/handler/car_trading"
@@ -13,8 +13,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
-	"github.com/sirupsen/logrus"
-
 	cars_handler "user_service/internal/handler/cars"
 	users_handler "user_service/internal/handler/users"
 	"user_service/internal/repository/cars"
@@ -33,7 +31,7 @@ type App struct {
 	userCarsRepo      user_cars.Repository
 	transferRepo      transfers.Repository
 	carTradingHandler car_trading_handler.Handler
-	logger            *logrus.Logger
+	logger            log.Logger
 	db                *sqlx.DB
 	clientHTTP        *http.Client
 
@@ -86,11 +84,11 @@ func (a *App) initDatabase() {
 
 	db, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Fatal(err)
+		log.Init().Fatal(err.Error())
 	}
 
 	if err := db.Ping(); err != nil {
-		log.Fatal(err)
+		log.Init().Fatal(err.Error())
 	}
 
 	a.db = db
@@ -98,8 +96,7 @@ func (a *App) initDatabase() {
 }
 
 func (a *App) initLogger() {
-	a.logger = logrus.New()
-	a.logger.SetLevel(logrus.DebugLevel)
+	a.logger = log.Init()
 }
 
 func (a *App) initRepos() {
@@ -127,7 +124,7 @@ func (a *App) initServices() {
 func (a *App) populateConfig() {
 	cfg, err := config.ParseConfig()
 	if err != nil {
-		log.Fatal()
+		log.Init().Fatal(err.Error())
 	}
 
 	a.config = cfg

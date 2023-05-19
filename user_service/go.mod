@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/andReyM228/lib/auth v1.0.0
+	github.com/andReyM228/lib/log v0.0.0-20230519164622-ef1b2b87f3f8
 	github.com/gofiber/fiber/v2 v2.42.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.2.0

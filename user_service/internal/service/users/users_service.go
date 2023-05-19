@@ -2,7 +2,7 @@ package users
 
 import (
 	"errors"
-	"github.com/sirupsen/logrus"
+	"github.com/andReyM228/lib/log"
 	"user_service/internal/domain"
 	"user_service/internal/domain/errs"
 	"user_service/internal/repository"
@@ -19,10 +19,10 @@ type Service struct {
 	cars      cars.Repository
 	userCars  user_cars.Repository
 	transfers transfers.Repository
-	log       *logrus.Logger
+	log       log.Logger
 }
 
-func NewService(users users.Repository, log *logrus.Logger) Service {
+func NewService(users users.Repository, log log.Logger) Service {
 	return Service{
 		users: users,
 		log:   log,
@@ -36,7 +36,7 @@ func (s Service) Login(chatID int64, password string) (int64, error) {
 			return 0, errs.NotFoundError{What: "user"}
 		}
 
-		s.log.Error(err)
+		s.log.Error(err.Error())
 
 		return 0, errs.InternalError{}
 	}

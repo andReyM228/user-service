@@ -2,18 +2,18 @@ package transfers
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"github.com/andReyM228/lib/log"
 	"net/http"
 	"strings"
 	"user_service/internal/repository"
 )
 
 type Repository struct {
-	log    *logrus.Logger
+	log    log.Logger
 	client *http.Client
 }
 
-func NewRepository(client *http.Client, log *logrus.Logger) Repository {
+func NewRepository(client *http.Client, log log.Logger) Repository {
 	return Repository{
 		log:    log,
 		client: client,
