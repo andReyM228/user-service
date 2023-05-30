@@ -1,11 +1,10 @@
 package car_trading
 
 import (
+	"github.com/andReyM228/lib/responder"
 	"user_service/internal/service/car_trading"
 
 	"github.com/gofiber/fiber/v2"
-
-	"user_service/internal/handler"
 )
 
 type Handler struct {
@@ -21,12 +20,12 @@ func NewHandler(carTrading car_trading.Service) Handler {
 func (h Handler) BuyCar(ctx *fiber.Ctx) error {
 	userID, err := ctx.ParamsInt("user_id")
 	if err != nil {
-		return handler.HandleError(ctx, err)
+		return responder.HandleError(ctx, err)
 	}
 
 	carID, err := ctx.ParamsInt("car_id")
 	if err != nil {
-		return handler.HandleError(ctx, err)
+		return responder.HandleError(ctx, err)
 	}
 
 	if err := h.carTrading.BuyCar(int64(userID), int64(carID)); err != nil {

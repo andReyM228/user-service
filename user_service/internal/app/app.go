@@ -109,7 +109,7 @@ func (a *App) initRepos() {
 
 func (a *App) initHandlers() {
 	a.userHandler = users_handler.NewHandler(a.userRepo, a.userService)
-	a.carHandler = cars_handler.NewHandler(a.carRepo)
+	a.carHandler = cars_handler.NewHandler(a.carRepo, a.carTradingService)
 	a.carTradingHandler = car_trading_handler.NewHandler(a.carTradingService)
 	a.logger.Debug("handlers created")
 }

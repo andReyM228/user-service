@@ -1,8 +1,11 @@
 package car_trading
 
 import (
+	"errors"
+	"github.com/andReyM228/lib/errs"
 	"github.com/andReyM228/lib/log"
 	"user_service/internal/domain"
+	"user_service/internal/repository"
 	"user_service/internal/repository/cars"
 	"user_service/internal/repository/transfers"
 	"user_service/internal/repository/user_cars"
@@ -64,3 +67,18 @@ func (s Service) BuyCar(userID, carID int64) error {
 3. делаем транзакцию
 4. если транзакция успешна, добавляем пользователю машину, если не успешна, то выдаём ошибку
 */
+
+func (s Service) GetCar(id int64) (domain.Car, error) {
+	car, err := s.cars.Get(id)
+	if err != nil {
+		if errors.As(err, &repository.InternalServerError{}) {
+			s.log.Error(err.Error())
+			return domain.Car{}, errs.InternalError{}
+		}
+		s.log.Debug(err.Error())
+
+		return domain.Car{}, errs.NotFoundError{What: err.Error()}
+	}
+
+	return car, nil
+}
