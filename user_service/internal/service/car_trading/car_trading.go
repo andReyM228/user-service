@@ -32,8 +32,8 @@ func NewService(users users.Repository, cars cars.Repository, userCars user_cars
 	}
 }
 
-func (s Service) BuyCar(userID, carID int64) error {
-	user, err := s.users.Get(domain.FieldID, userID)
+func (s Service) BuyCar(chatID, carID int64) error {
+	user, err := s.users.Get(domain.FieldChatID, chatID)
 	if err != nil {
 		s.log.Error(err.Error())
 		return err

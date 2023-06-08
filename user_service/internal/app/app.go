@@ -58,7 +58,7 @@ func (a *App) Run() {
 func (a *App) initHTTP() {
 	a.router = fiber.New()
 
-	a.router.Post("v1/user-service/buy-car/:user_id/:car_id", a.carTradingHandler.BuyCar)
+	a.router.Post("v1/user-service/buy-car/:chat_id/:car_id", a.carTradingHandler.BuyCar)
 
 	a.router.Get("v1/user-service/user/:id", a.userHandler.Get)
 	a.router.Post("v1/user-service/user", a.userHandler.Create)

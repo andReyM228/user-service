@@ -18,7 +18,7 @@ func NewHandler(carTrading car_trading.Service) Handler {
 }
 
 func (h Handler) BuyCar(ctx *fiber.Ctx) error {
-	userID, err := ctx.ParamsInt("user_id")
+	chatID, err := ctx.ParamsInt("chat_id")
 	if err != nil {
 		return responder.HandleError(ctx, err)
 	}
@@ -28,7 +28,7 @@ func (h Handler) BuyCar(ctx *fiber.Ctx) error {
 		return responder.HandleError(ctx, err)
 	}
 
-	if err := h.carTrading.BuyCar(int64(userID), int64(carID)); err != nil {
+	if err := h.carTrading.BuyCar(int64(chatID), int64(carID)); err != nil {
 		return err
 	}
 
