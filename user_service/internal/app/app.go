@@ -2,21 +2,22 @@ package app
 
 import (
 	"fmt"
-	"github.com/andReyM228/lib/log"
 	"net/http"
+
 	"user_service/internal/config"
 	car_trading_handler "user_service/internal/handler/car_trading"
-	"user_service/internal/repository/transfers"
-	"user_service/internal/repository/user_cars"
-	"user_service/internal/service/car_trading"
-	users_service "user_service/internal/service/users"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/jmoiron/sqlx"
 	cars_handler "user_service/internal/handler/cars"
 	users_handler "user_service/internal/handler/users"
 	"user_service/internal/repository/cars"
+	"user_service/internal/repository/transfers"
+	"user_service/internal/repository/user_cars"
 	"user_service/internal/repository/users"
+	"user_service/internal/service/car_trading"
+	users_service "user_service/internal/service/users"
+
+	"github.com/andReyM228/lib/log"
+	"github.com/gofiber/fiber/v2"
+	"github.com/jmoiron/sqlx"
 )
 
 type App struct {

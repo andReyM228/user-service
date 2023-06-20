@@ -1,9 +1,10 @@
 package user_cars
 
 import (
+	"user_service/internal/repository"
+
 	"github.com/andReyM228/lib/log"
 	"github.com/jmoiron/sqlx"
-	"user_service/internal/repository"
 )
 
 type Repository struct {

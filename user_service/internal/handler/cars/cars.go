@@ -2,14 +2,15 @@ package cars
 
 import (
 	"encoding/json"
+
+	"user_service/internal/domain"
+	"user_service/internal/repository/cars"
+	"user_service/internal/service/car_trading"
+
 	"github.com/andReyM228/lib/auth"
 	"github.com/andReyM228/lib/errs"
 	"github.com/andReyM228/lib/responder"
 	"github.com/gofiber/fiber/v2"
-	"user_service/internal/service/car_trading"
-
-	"user_service/internal/domain"
-	"user_service/internal/repository/cars"
 )
 
 type Handler struct {

@@ -2,10 +2,12 @@ package transfers
 
 import (
 	"fmt"
-	"github.com/andReyM228/lib/log"
 	"net/http"
 	"strings"
+
 	"user_service/internal/repository"
+
+	"github.com/andReyM228/lib/log"
 )
 
 type Repository struct {

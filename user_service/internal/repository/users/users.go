@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/andReyM228/lib/log"
 
-	"github.com/jmoiron/sqlx"
 	"user_service/internal/domain"
 	"user_service/internal/repository"
+
+	"github.com/andReyM228/lib/log"
+	"github.com/jmoiron/sqlx"
 )
 
 type Repository struct {

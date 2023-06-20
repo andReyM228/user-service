@@ -2,14 +2,14 @@ package users
 
 import (
 	"encoding/json"
-	"github.com/andReyM228/lib/responder"
-	"user_service/internal/domain/errs"
-	users_service "user_service/internal/service/users"
-
-	"github.com/gofiber/fiber/v2"
 
 	"user_service/internal/domain"
+	"user_service/internal/domain/errs"
 	"user_service/internal/repository/users"
+	users_service "user_service/internal/service/users"
+
+	"github.com/andReyM228/lib/responder"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Handler struct {

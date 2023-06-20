@@ -2,14 +2,16 @@ package car_trading
 
 import (
 	"errors"
-	"github.com/andReyM228/lib/errs"
-	"github.com/andReyM228/lib/log"
+
 	"user_service/internal/domain"
 	"user_service/internal/repository"
 	"user_service/internal/repository/cars"
 	"user_service/internal/repository/transfers"
 	"user_service/internal/repository/user_cars"
 	"user_service/internal/repository/users"
+
+	"github.com/andReyM228/lib/errs"
+	"github.com/andReyM228/lib/log"
 )
 
 const systemUser = 0

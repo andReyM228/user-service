@@ -1,9 +1,9 @@
 package car_trading
 
 import (
-	"github.com/andReyM228/lib/responder"
 	"user_service/internal/service/car_trading"
 
+	"github.com/andReyM228/lib/responder"
 	"github.com/gofiber/fiber/v2"
 )
 

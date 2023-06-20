@@ -1,9 +1,9 @@
 package main
 
 import (
-	_ "github.com/lib/pq"
-
 	"user_service/internal/app"
+
+	_ "github.com/lib/pq"
 )
 
 const serviceName = "user_service"
