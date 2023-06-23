@@ -37,3 +37,7 @@ type Car struct {
 	Image     string
 	CreatedAt time.Time `db:"created_at"`
 }
+
+type Cars struct {
+	Cars []Car
+}

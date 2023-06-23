@@ -53,6 +53,29 @@ func (h Handler) Get(ctx *fiber.Ctx) error {
 	return ctx.Send(payload)
 }
 
+func (h Handler) GetAll(ctx *fiber.Ctx) error {
+	token, err := responder.GetToken(ctx)
+	if err != nil {
+		return responder.HandleError(ctx, err)
+	}
+
+	if err := auth.VerifyToken(token); err != nil {
+		return responder.HandleError(ctx, errs.UnauthorizedError{Cause: err.Error()})
+	}
+
+	cars, err := h.carService.GetCars()
+	if err != nil {
+		return responder.HandleError(ctx, err)
+	}
+
+	payload, err := json.Marshal(cars)
+	if err != nil {
+		return responder.HandleError(ctx, err)
+	}
+
+	return ctx.Send(payload)
+}
+
 func (h Handler) Update(ctx *fiber.Ctx) error {
 	var car domain.Car
 	if err := ctx.BodyParser(&car); err != nil {

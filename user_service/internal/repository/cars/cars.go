@@ -39,6 +39,22 @@ func (r Repository) Get(id int64) (domain.Car, error) {
 	return car, nil
 }
 
+func (r Repository) GetAll() (domain.Cars, error) {
+	var cars domain.Cars
+
+	if err := r.db.Get(&cars, "SELECT * FROM cars "); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			r.log.Info(err.Error())
+			return domain.Cars{}, repository.NotFound{NotFound: "cars"}
+		}
+
+		r.log.Error(err.Error())
+		return domain.Cars{}, repository.InternalServerError{}
+	}
+
+	return cars, nil
+}
+
 func (r Repository) Update(car domain.Car) error {
 	_, err := r.db.Exec("UPDATE cars SET name = $1, model = $2 WHERE id = $3", car.Name, car.Model, car.ID)
 
