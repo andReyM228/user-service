@@ -3,7 +3,6 @@ package cars
 import (
 	"database/sql"
 	"errors"
-
 	"user_service/internal/domain"
 	"user_service/internal/repository"
 
@@ -39,10 +38,10 @@ func (r Repository) Get(id int64) (domain.Car, error) {
 	return car, nil
 }
 
-func (r Repository) GetAll() (domain.Cars, error) {
-	var cars domain.Cars
+func (r Repository) GetAll(label string) (domain.Cars, error) {
+	var cars []domain.Car
 
-	if err := r.db.Get(&cars, "SELECT * FROM cars "); err != nil {
+	if err := r.db.Select(&cars, "SELECT * FROM cars WHERE name = $1", label); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			r.log.Info(err.Error())
 			return domain.Cars{}, repository.NotFound{NotFound: "cars"}
@@ -52,7 +51,7 @@ func (r Repository) GetAll() (domain.Cars, error) {
 		return domain.Cars{}, repository.InternalServerError{}
 	}
 
-	return cars, nil
+	return domain.Cars{Cars: cars}, nil
 }
 
 func (r Repository) Update(car domain.Car) error {

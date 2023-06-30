@@ -68,7 +68,7 @@ func (a *App) initHTTP() {
 	a.router.Delete("v1/user-service/user/:id", a.userHandler.Delete)
 
 	a.router.Get("v1/user-service/car/:id", a.carHandler.Get)
-	a.router.Get("v1/user-service/cars", a.carHandler.GetAll)
+	a.router.Get("v1/user-service/cars/:label", a.carHandler.GetAll)
 	a.router.Post("v1/user-service/car", a.carHandler.Create)
 	a.router.Put("v1/user-service/car", a.carHandler.Update)
 	a.router.Delete("v1/user-service/car/:id", a.carHandler.Delete)
