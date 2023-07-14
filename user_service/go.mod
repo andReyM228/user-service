@@ -3,7 +3,8 @@ module user_service
 go 1.19
 
 require (
-	github.com/andReyM228/lib/auth v1.0.0
+	github.com/andReyM228/lib/auth v1.0.1
+	github.com/andReyM228/lib/errs v1.0.0
 	github.com/andReyM228/lib/log v0.0.0-20230519164622-ef1b2b87f3f8
 	github.com/andReyM228/lib/responder v0.0.0-20230519164622-ef1b2b87f3f8
 	github.com/gofiber/fiber/v2 v2.46.0
@@ -14,7 +15,6 @@ require (
 )
 
 require (
-	github.com/andReyM228/lib/errs v1.0.0 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1 // indirect

@@ -1,5 +1,5 @@
-github.com/andReyM228/lib/auth v1.0.0 h1:ahWHLdRzyBRlhrfoctWSf0G1uvcFF97rAyK1M2V3+Ns=
-github.com/andReyM228/lib/auth v1.0.0/go.mod h1:PRpTOg6L+gbuM3ZxAwe/CZlC5i5I+8SY/qyyIdPbnw0=
+github.com/andReyM228/lib/auth v1.0.1 h1:H/RXDlg7Lh10X0lG/NtyHOp72XsHE6WVKRSruUdsP3g=
+github.com/andReyM228/lib/auth v1.0.1/go.mod h1:PRpTOg6L+gbuM3ZxAwe/CZlC5i5I+8SY/qyyIdPbnw0=
 github.com/andReyM228/lib/errs v1.0.0 h1:4g7lwvbvOlnnjXUu653/rb0mNPToLMyTycaMaj34eNA=
 github.com/andReyM228/lib/errs v1.0.0/go.mod h1:Blpyt7ldn3WPmsjygBuKe2CWNfYSp6++n3T8J5rLib8=
 github.com/andReyM228/lib/log v0.0.0-20230519164622-ef1b2b87f3f8 h1:GXQT0LbojesR26v3/pvrzNu3PFbKvJDS15VOFq1hjn0=

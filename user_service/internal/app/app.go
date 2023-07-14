@@ -60,6 +60,7 @@ func (a *App) initHTTP() {
 	a.router = fiber.New()
 
 	a.router.Post("v1/user-service/buy-car/:chat_id/:car_id", a.carTradingHandler.BuyCar)
+	a.router.Post("v1/user-service/sell-car/:chat_id/:car_id", a.carTradingHandler.SellCar)
 
 	a.router.Get("v1/user-service/user/:id", a.userHandler.Get)
 	a.router.Post("v1/user-service/user", a.userHandler.Create)
@@ -69,6 +70,7 @@ func (a *App) initHTTP() {
 
 	a.router.Get("v1/user-service/car/:id", a.carHandler.Get)
 	a.router.Get("v1/user-service/cars/:label", a.carHandler.GetAll)
+	a.router.Get("v1/user-service/user-cars", a.carHandler.GetUserCars)
 	a.router.Post("v1/user-service/car", a.carHandler.Create)
 	a.router.Put("v1/user-service/car", a.carHandler.Update)
 	a.router.Delete("v1/user-service/car/:id", a.carHandler.Delete)

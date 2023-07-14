@@ -1,6 +1,9 @@
 package user_cars
 
 import (
+	"database/sql"
+	"errors"
+	"user_service/internal/domain"
 	"user_service/internal/repository"
 
 	"github.com/andReyM228/lib/log"
@@ -26,4 +29,29 @@ func (r Repository) Create(userID, carID int) error {
 	}
 
 	return nil
+}
+
+func (r Repository) Delete(userID, carID int) error {
+	if _, err := r.db.Exec("DELETE FROM user_cars WHERE user_id = $1 AND car_id = $2", userID, carID); err != nil {
+		r.log.Error(err.Error())
+		return repository.InternalServerError{}
+	}
+
+	return nil
+}
+
+func (r Repository) GetUserCars(userID int64) (domain.UserCars, error) {
+	var userCars []domain.UserCar
+
+	if err := r.db.Select(&userCars, "SELECT * FROM user_cars WHERE user_id = $1", userID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			r.log.Info(err.Error())
+			return domain.UserCars{}, repository.NotFound{NotFound: "user_cars"}
+		}
+
+		r.log.Error(err.Error())
+		return domain.UserCars{}, repository.InternalServerError{}
+	}
+
+	return domain.UserCars{Cars: userCars}, nil
 }

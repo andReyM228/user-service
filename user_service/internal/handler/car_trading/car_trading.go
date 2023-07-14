@@ -34,3 +34,21 @@ func (h Handler) BuyCar(ctx *fiber.Ctx) error {
 
 	return ctx.SendStatus(fiber.StatusOK)
 }
+
+func (h Handler) SellCar(ctx *fiber.Ctx) error {
+	chatID, err := ctx.ParamsInt("chat_id")
+	if err != nil {
+		return responder.HandleError(ctx, err)
+	}
+
+	carID, err := ctx.ParamsInt("car_id")
+	if err != nil {
+		return responder.HandleError(ctx, err)
+	}
+
+	if err := h.carTrading.SellCar(int64(chatID), int64(carID)); err != nil {
+		return err
+	}
+
+	return ctx.SendStatus(fiber.StatusOK)
+}
