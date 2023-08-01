@@ -70,6 +70,8 @@ func (s Service) SellCar(chatID, carID int64) error {
 		return err
 	}
 
+	//проверка есть ли у юзера машина
+
 	var existCar bool
 
 	for _, car := range user.Cars {

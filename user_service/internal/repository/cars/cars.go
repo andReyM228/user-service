@@ -3,6 +3,7 @@ package cars
 import (
 	"database/sql"
 	"errors"
+
 	"user_service/internal/domain"
 	"user_service/internal/repository"
 

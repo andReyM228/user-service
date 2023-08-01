@@ -2,6 +2,7 @@ package config
 
 import (
 	"gopkg.in/yaml.v3"
+
 	"log"
 	"os"
 )
@@ -26,7 +27,7 @@ type (
 )
 
 func ParseConfig() (Config, error) {
-	file, err := os.ReadFile("C:\\Users\\admin\\Desktop\\projects\\buycars\\user-service\\user_service\\cmd\\config.yaml")
+	file, err := os.ReadFile("./cmd/config.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}
