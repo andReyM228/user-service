@@ -2,6 +2,7 @@ package users
 
 import (
 	"encoding/json"
+	"github.com/andReyM228/lib/rabbit"
 
 	"user_service/internal/domain"
 	"user_service/internal/domain/errs"
@@ -15,12 +16,14 @@ import (
 type Handler struct {
 	userRepo    users.Repository
 	userService users_service.Service
+	rabbit      rabbit.Rabbit
 }
 
-func NewHandler(repo users.Repository, service users_service.Service) Handler {
+func NewHandler(repo users.Repository, service users_service.Service, rabbit rabbit.Rabbit) Handler {
 	return Handler{
 		userRepo:    repo,
 		userService: service,
+		rabbit:      rabbit,
 	}
 }
 
@@ -67,6 +70,24 @@ func (h Handler) Create(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.SendStatus(fiber.StatusCreated)
+}
+
+func (h Handler) BrokerCreate(request []byte) error {
+	var req rabbit.RequestModel
+	if err := json.Unmarshal(request, &req); err != nil {
+		return err
+	}
+
+	var user domain.User
+	if err := json.Unmarshal(req.Payload, &user); err != nil {
+		return err
+	}
+
+	if err := h.userService.Registration(user); err != nil {
+		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
+	}
+
+	return h.rabbit.Reply(req.ReplyTopic, 200, nil)
 }
 
 func (h Handler) Delete(ctx *fiber.Ctx) error {

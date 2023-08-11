@@ -2,6 +2,8 @@ package app
 
 import (
 	"fmt"
+	"github.com/andReyM228/lib/rabbit"
+	"github.com/gofiber/fiber/v2"
 	"net/http"
 
 	"user_service/internal/config"
@@ -16,9 +18,11 @@ import (
 	users_service "user_service/internal/service/users"
 
 	"github.com/andReyM228/lib/log"
-	"github.com/gofiber/fiber/v2"
+	_ "github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
 )
+
+const urlRabbit = "amqp://guest:guest@localhost:5672/"
 
 type App struct {
 	config            config.Config
@@ -35,6 +39,7 @@ type App struct {
 	logger            log.Logger
 	db                *sqlx.DB
 	clientHTTP        *http.Client
+	rabbit            rabbit.Rabbit
 
 	router *fiber.App
 }
@@ -49,10 +54,12 @@ func (a *App) Run() {
 	a.populateConfig()
 	a.initLogger()
 	a.initDatabase()
+	a.initRabbit()
 	a.initHTTPClient()
 	a.initRepos()
 	a.initServices()
 	a.initHandlers()
+	a.listenRabbit()
 	a.initHTTP()
 }
 
@@ -77,6 +84,15 @@ func (a *App) initHTTP() {
 
 	a.logger.Debug("fiber api started")
 	_ = a.router.Listen(fmt.Sprintf(":%d", a.config.HTTP.Port))
+}
+
+func (a *App) listenRabbit() {
+	go func() {
+		err := a.rabbit.Consume("loginUser", a.userHandler.BrokerCreate)
+		if err != nil {
+			return
+		}
+	}()
 }
 
 func (a *App) initDatabase() {
@@ -112,7 +128,7 @@ func (a *App) initRepos() {
 }
 
 func (a *App) initHandlers() {
-	a.userHandler = users_handler.NewHandler(a.userRepo, a.userService)
+	a.userHandler = users_handler.NewHandler(a.userRepo, a.userService, a.rabbit)
 	a.carHandler = cars_handler.NewHandler(a.carRepo, a.carTradingService)
 	a.carTradingHandler = car_trading_handler.NewHandler(a.carTradingService)
 	a.logger.Debug("handlers created")
@@ -136,4 +152,12 @@ func (a *App) populateConfig() {
 
 func (a *App) initHTTPClient() {
 	a.clientHTTP = http.DefaultClient
+}
+
+func (a *App) initRabbit() {
+	var err error
+	a.rabbit, err = rabbit.NewRabbitMQ(urlRabbit)
+	if err != nil {
+		a.logger.Fatal(err.Error())
+	}
 }
