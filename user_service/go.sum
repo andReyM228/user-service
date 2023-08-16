@@ -4,14 +4,6 @@ github.com/andReyM228/lib/errs v1.0.5 h1:S8JZr0GufaIGGYLLa2/DC6fChpVs0iO2/mfwozh
 github.com/andReyM228/lib/errs v1.0.5/go.mod h1:Blpyt7ldn3WPmsjygBuKe2CWNfYSp6++n3T8J5rLib8=
 github.com/andReyM228/lib/log v0.0.0-20230714155438-4d44957c3573 h1:r6oeqkyyKahmCCbwsP0vfcnbFVQ2kaQ7TpxlquNXpPA=
 github.com/andReyM228/lib/log v0.0.0-20230714155438-4d44957c3573/go.mod h1:B57HbHEgpkwENwn2Hhl7lyMu8MIbFmw7O1tR2ZSo0vA=
-github.com/andReyM228/lib/rabbit v1.0.3 h1:3jNfYsguMvQrcEtX9ZNDPBLltY5p1s2fmqnGTn1ec/c=
-github.com/andReyM228/lib/rabbit v1.0.3/go.mod h1:bjfxh8eRBLlpHhgoE/uwzhcCbsxCgYJ4kkz/hz7tlvA=
-github.com/andReyM228/lib/rabbit v1.0.4 h1:pJ80mwpV7L/RDPWdmKy7rQTdoO836QIOn7X0rKs1IE4=
-github.com/andReyM228/lib/rabbit v1.0.4/go.mod h1:bjfxh8eRBLlpHhgoE/uwzhcCbsxCgYJ4kkz/hz7tlvA=
-github.com/andReyM228/lib/rabbit v1.0.5 h1:eiiBL57Ru5OD9SsLDZb6xUvODConSoJf2/FldmPXhSk=
-github.com/andReyM228/lib/rabbit v1.0.5/go.mod h1:bjfxh8eRBLlpHhgoE/uwzhcCbsxCgYJ4kkz/hz7tlvA=
-github.com/andReyM228/lib/rabbit v1.0.6 h1:de+Dxj3ZmTlT+wWPMeKIxJTpGM3iH85+dgxZ8mnqz28=
-github.com/andReyM228/lib/rabbit v1.0.6/go.mod h1:bjfxh8eRBLlpHhgoE/uwzhcCbsxCgYJ4kkz/hz7tlvA=
 github.com/andReyM228/lib/rabbit v1.0.7 h1:Tu4nvUwEzWWDmFgYkO6g9/67CQQIKNqMjO1uyCivjLs=
 github.com/andReyM228/lib/rabbit v1.0.7/go.mod h1:bjfxh8eRBLlpHhgoE/uwzhcCbsxCgYJ4kkz/hz7tlvA=
 github.com/andReyM228/lib/responder v0.0.0-20230807185826-49977c79c61d h1:jdJZKe0g+ZOB9DIy+/O2Lmkfzg9fAatiilufSJyDzhY=

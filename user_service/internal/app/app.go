@@ -88,7 +88,7 @@ func (a *App) initHTTP() {
 
 func (a *App) listenRabbit() {
 	go func() {
-		err := a.rabbit.Consume("loginUser", a.userHandler.BrokerCreate)
+		err := a.rabbit.Consume("createUser", a.userHandler.BrokerCreate)
 		if err != nil {
 			return
 		}
