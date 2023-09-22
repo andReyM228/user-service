@@ -2,6 +2,7 @@ package users
 
 import (
 	"encoding/json"
+	"github.com/andReyM228/lib/bus"
 	"github.com/andReyM228/lib/rabbit"
 	"github.com/andReyM228/lib/responder"
 	"github.com/gofiber/fiber/v2"
@@ -70,24 +71,6 @@ func (h Handler) Create(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusCreated)
 }
 
-func (h Handler) BrokerCreate(request []byte) error {
-	var req rabbit.RequestModel
-	if err := json.Unmarshal(request, &req); err != nil {
-		return err
-	}
-
-	var user domain.User
-	if err := json.Unmarshal(req.Payload, &user); err != nil {
-		return err
-	}
-
-	if err := h.userService.Registration(user); err != nil {
-		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
-	}
-
-	return h.rabbit.Reply(req.ReplyTopic, 200, nil)
-}
-
 func (h Handler) Delete(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
@@ -122,4 +105,66 @@ func (h Handler) Login(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Send(payload)
+}
+
+// -----------------------------------------------------------------------
+
+func (h Handler) BrokerCreate(request []byte) error {
+	var req rabbit.RequestModel
+	if err := json.Unmarshal(request, &req); err != nil {
+		return err
+	}
+
+	var user domain.User
+	if err := json.Unmarshal(req.Payload, &user); err != nil {
+		return err
+	}
+
+	if err := h.userService.Registration(user); err != nil {
+		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
+	}
+
+	return h.rabbit.Reply(req.ReplyTopic, 200, nil)
+}
+
+func (h Handler) BrokerLogin(request []byte) error {
+	var req rabbit.RequestModel
+	if err := json.Unmarshal(request, &req); err != nil {
+		return err
+	}
+
+	var loginRequest bus.LoginRequest
+	if err := json.Unmarshal(req.Payload, &loginRequest); err != nil {
+		return err
+	}
+
+	if loginRequest.ChatID == 0 || loginRequest.Password == "" {
+		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
+	}
+
+	userID, err := h.userService.Login(loginRequest.ChatID, loginRequest.Password)
+	if err != nil {
+		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
+	}
+
+	return h.rabbit.Reply(req.ReplyTopic, 200, loginResponse{userID})
+}
+
+func (h Handler) BrokerGetUserByID(request []byte) error {
+	var req rabbit.RequestModel
+	if err := json.Unmarshal(request, &req); err != nil {
+		return err
+	}
+
+	var userRequest bus.GetUserByIDRequest
+	if err := json.Unmarshal(req.Payload, &userRequest); err != nil {
+		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
+	}
+
+	user, err := h.userRepo.Get(domain.FieldID, userRequest.ID)
+	if err != nil {
+		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
+	}
+
+	return h.rabbit.Reply(req.ReplyTopic, 200, user)
 }

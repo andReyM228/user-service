@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/andReyM228/lib/database"
 	"gopkg.in/yaml.v3"
 
 	"log"
@@ -9,16 +10,8 @@ import (
 
 type (
 	Config struct {
-		DB   DB   `yaml:"db"`
-		HTTP HTTP `yaml:"http"`
-	}
-
-	DB struct {
-		Host     string `yaml:"host"`
-		Port     int    `yaml:"port"`
-		User     string `yaml:"user"`
-		Password string `yaml:"password"`
-		DBname   string `yaml:"db-name"`
+		DB   database.DBConfig `yaml:"db"`
+		HTTP HTTP              `yaml:"http"`
 	}
 
 	HTTP struct {

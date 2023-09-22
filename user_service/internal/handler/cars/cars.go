@@ -2,6 +2,8 @@ package cars
 
 import (
 	"encoding/json"
+	"github.com/andReyM228/lib/bus"
+	"github.com/andReyM228/lib/rabbit"
 
 	"user_service/internal/domain"
 	"user_service/internal/repository/cars"
@@ -16,12 +18,14 @@ import (
 type Handler struct {
 	carRepo    cars.Repository
 	carService car_trading.Service
+	rabbit     rabbit.Rabbit
 }
 
-func NewHandler(repo cars.Repository, service car_trading.Service) Handler {
+func NewHandler(repo cars.Repository, service car_trading.Service, rabbit rabbit.Rabbit) Handler {
 	return Handler{
 		carRepo:    repo,
 		carService: service,
+		rabbit:     rabbit,
 	}
 }
 
@@ -143,4 +147,25 @@ func (h Handler) Delete(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.SendStatus(fiber.StatusOK)
+}
+
+//------------------------------------------------------------------
+
+func (h Handler) BrokerGetCarByID(request []byte) error {
+	var req rabbit.RequestModel
+	if err := json.Unmarshal(request, &req); err != nil {
+		return err
+	}
+
+	var carRequest bus.GetCarByIDRequest
+	if err := json.Unmarshal(req.Payload, &carRequest); err != nil {
+		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
+	}
+
+	car, err := h.carRepo.Get(carRequest.ID)
+	if err != nil {
+		return h.rabbit.Reply(req.ReplyTopic, 500, nil)
+	}
+
+	return h.rabbit.Reply(req.ReplyTopic, 200, car)
 }

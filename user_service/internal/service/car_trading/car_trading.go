@@ -2,7 +2,6 @@ package car_trading
 
 import (
 	"errors"
-
 	"user_service/internal/domain"
 	"user_service/internal/repository"
 	"user_service/internal/repository/cars"

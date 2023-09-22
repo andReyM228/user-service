@@ -1,7 +1,10 @@
 package app
 
 import (
+	"embed"
 	"fmt"
+	"github.com/andReyM228/lib/bus"
+	"github.com/andReyM228/lib/database"
 	"github.com/andReyM228/lib/rabbit"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
@@ -22,7 +25,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-const urlRabbit = "amqp://guest:guest@localhost:5672/"
+const urlRabbit = "amqp://guest:guest@rabbitmq:5672/"
 
 type App struct {
 	config            config.Config
@@ -50,10 +53,10 @@ func New(name string) App {
 	}
 }
 
-func (a *App) Run() {
+func (a *App) Run(fs embed.FS) {
 	a.populateConfig()
 	a.initLogger()
-	a.initDatabase()
+	a.initDatabase(fs)
 	a.initRabbit()
 	a.initHTTPClient()
 	a.initRepos()
@@ -88,31 +91,36 @@ func (a *App) initHTTP() {
 
 func (a *App) listenRabbit() {
 	go func() {
-		err := a.rabbit.Consume("createUser", a.userHandler.BrokerCreate)
+		err := a.rabbit.Consume(bus.SubjectUserServiceCreateUser, a.userHandler.BrokerCreate)
+		if err != nil {
+			return
+		}
+	}()
+
+	go func() {
+		err := a.rabbit.Consume(bus.SubjectUserServiceLoginUser, a.userHandler.BrokerLogin)
+		if err != nil {
+			return
+		}
+	}()
+
+	go func() {
+		err := a.rabbit.Consume(bus.SubjectUserServiceGetUserByID, a.userHandler.BrokerGetUserByID)
+		if err != nil {
+			return
+		}
+	}()
+
+	go func() {
+		err := a.rabbit.Consume(bus.SubjectUserServiceGetCarByID, a.carHandler.BrokerGetCarByID)
 		if err != nil {
 			return
 		}
 	}()
 }
 
-func (a *App) initDatabase() {
-	a.logger.Debug("opening database connection")
-
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		a.config.DB.Host, a.config.DB.Port, a.config.DB.User, a.config.DB.Password, a.config.DB.DBname)
-
-	db, err := sqlx.Open("postgres", psqlInfo)
-	if err != nil {
-		log.Init().Fatal(err.Error())
-	}
-
-	if err := db.Ping(); err != nil {
-		log.Init().Fatal(err.Error())
-	}
-
-	a.db = db
-	a.logger.Debug("database connected")
+func (a *App) initDatabase(fs embed.FS) {
+	database.InitDatabase(a.logger, a.config.DB, fs)
 }
 
 func (a *App) initLogger() {
@@ -129,7 +137,7 @@ func (a *App) initRepos() {
 
 func (a *App) initHandlers() {
 	a.userHandler = users_handler.NewHandler(a.userRepo, a.userService, a.rabbit)
-	a.carHandler = cars_handler.NewHandler(a.carRepo, a.carTradingService)
+	a.carHandler = cars_handler.NewHandler(a.carRepo, a.carTradingService, a.rabbit)
 	a.carTradingHandler = car_trading_handler.NewHandler(a.carTradingService)
 	a.logger.Debug("handlers created")
 }
