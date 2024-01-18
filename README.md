@@ -1,4 +1,4 @@
-# User-Service for Telegram Bot
+# User-Service
 
 ## Description
 `user-service` manages Telegram bot user data. It stores and processes information about users, including cars and balances.Technologies
