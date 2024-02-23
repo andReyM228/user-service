@@ -2,20 +2,34 @@ package config
 
 import (
 	"github.com/andReyM228/lib/database"
+	"github.com/andReyM228/one/chain_client"
 	"gopkg.in/yaml.v3"
 
 	"log"
 	"os"
 )
 
+// TODO: добавить валидацию конфига
+
 type (
 	Config struct {
-		DB   database.DBConfig `yaml:"db"`
-		HTTP HTTP              `yaml:"http"`
+		Chain  chain_client.ClientConfig `yaml:"chain"`
+		DB     database.DBConfig         `yaml:"db"`
+		HTTP   HTTP                      `yaml:"http"`
+		Rabbit Rabbit                    `yaml:"rabbit"`
+		Extra  Extra                     `yaml:"extra"`
 	}
 
 	HTTP struct {
 		Port int `yaml:"port"`
+	}
+
+	Rabbit struct {
+		Url string `yaml:"url"`
+	}
+
+	Extra struct {
+		CarSystemWallet string `yaml:"car-system-wallet"`
 	}
 )
 

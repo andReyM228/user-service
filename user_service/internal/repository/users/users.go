@@ -24,6 +24,8 @@ func NewRepository(database *sqlx.DB, log log.Logger) Repository {
 	}
 }
 
+// TODO: обработка ошибок
+
 func (r Repository) Get(field string, value any) (domain.User, error) {
 	var user domain.User
 	var cars []domain.Car
@@ -59,8 +61,8 @@ func (r Repository) Get(field string, value any) (domain.User, error) {
 }
 
 func (r Repository) Update(user domain.User) error {
-	if _, err := r.db.Exec("UPDATE users SET name = $1, surname = $2, phone = $3, email = $4, password = $5, chat_id = $6 WHERE id = $5",
-		user.Name, user.Surname, user.Phone, user.Email, user.ID, user.Password, user.ChatID); err != nil {
+	if _, err := r.db.Exec("UPDATE users SET name = $1, surname = $2, phone = $3, email = $4, password = $5, chat_id = $6, account_address = $7 WHERE id = $5",
+		user.Name, user.Surname, user.Phone, user.Email, user.ID, user.Password, user.ChatID, user.AccountAddress); err != nil {
 		r.log.Error(err.Error())
 		return repository.InternalServerError{}
 	}
@@ -69,7 +71,7 @@ func (r Repository) Update(user domain.User) error {
 }
 
 func (r Repository) Create(user domain.User) error {
-	if _, err := r.db.Exec("INSERT INTO users (name, surname, phone, email, password, chat_id) VALUES ($1, $2, $3, $4, $5, $6)", user.Name, user.Surname, user.Phone, user.Email, user.Password, user.ChatID); err != nil {
+	if _, err := r.db.Exec("INSERT INTO users (name, surname, phone, email, password, chat_id, account_address) VALUES ($1, $2, $3, $4, $5, $6, $7)", user.Name, user.Surname, user.Phone, user.Email, user.Password, user.ChatID, user.AccountAddress); err != nil {
 		r.log.Error(err.Error())
 		return repository.InternalServerError{}
 	}

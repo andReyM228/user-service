@@ -1,11 +1,13 @@
 package app
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"github.com/andReyM228/lib/bus"
 	"github.com/andReyM228/lib/database"
 	"github.com/andReyM228/lib/rabbit"
+	"github.com/andReyM228/one/chain_client"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
 
@@ -25,8 +27,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-const urlRabbit = "amqp://guest:guest@rabbitmq:5672/"
-
 type App struct {
 	config            config.Config
 	serviceName       string
@@ -43,6 +43,7 @@ type App struct {
 	db                *sqlx.DB
 	clientHTTP        *http.Client
 	rabbit            rabbit.Rabbit
+	chain             chain_client.Client
 
 	router *fiber.App
 }
@@ -57,6 +58,7 @@ func (a *App) Run(fs embed.FS) {
 	a.populateConfig()
 	a.initLogger()
 	a.initDatabase(fs)
+	a.initChainClient(context.Background())
 	a.initRabbit()
 	a.initHTTPClient()
 	a.initRepos()
@@ -69,7 +71,7 @@ func (a *App) Run(fs embed.FS) {
 func (a *App) initHTTP() {
 	a.router = fiber.New()
 
-	a.router.Post("v1/user-service/buy-car/:chat_id/:car_id", a.carTradingHandler.BuyCar)
+	a.router.Post("v1/user-service/buy-car/:chat_id/:car_id/:tx_hash", a.carTradingHandler.BuyCar)
 	a.router.Post("v1/user-service/sell-car/:chat_id/:car_id", a.carTradingHandler.SellCar)
 
 	a.router.Get("v1/user-service/user/:id", a.userHandler.Get)
@@ -90,37 +92,35 @@ func (a *App) initHTTP() {
 }
 
 func (a *App) listenRabbit() {
-	go func() {
-		err := a.rabbit.Consume(bus.SubjectUserServiceCreateUser, a.userHandler.BrokerCreate)
-		if err != nil {
-			return
-		}
-	}()
 
-	go func() {
-		err := a.rabbit.Consume(bus.SubjectUserServiceLoginUser, a.userHandler.BrokerLogin)
-		if err != nil {
-			return
-		}
-	}()
+	err := a.rabbit.Consume(bus.SubjectUserServiceCreateUser, a.userHandler.BrokerCreate)
+	if err != nil {
+		return
+	}
 
-	go func() {
-		err := a.rabbit.Consume(bus.SubjectUserServiceGetUserByID, a.userHandler.BrokerGetUserByID)
-		if err != nil {
-			return
-		}
-	}()
+	err = a.rabbit.Consume(bus.SubjectUserServiceLoginUser, a.userHandler.BrokerLogin)
+	if err != nil {
+		return
+	}
 
-	go func() {
-		err := a.rabbit.Consume(bus.SubjectUserServiceGetCarByID, a.carHandler.BrokerGetCarByID)
-		if err != nil {
-			return
-		}
-	}()
+	err = a.rabbit.Consume(bus.SubjectUserServiceGetUserByID, a.userHandler.BrokerGetUserByID)
+	if err != nil {
+		return
+	}
+
+	err = a.rabbit.Consume(bus.SubjectUserServiceGetCarByID, a.carHandler.BrokerGetCarByID)
+	if err != nil {
+		return
+	}
+
+}
+
+func (a *App) initChainClient(ctx context.Context) {
+	a.chain = chain_client.NewClient(a.config.Chain)
 }
 
 func (a *App) initDatabase(fs embed.FS) {
-	database.InitDatabase(a.logger, a.config.DB, fs)
+	a.db = database.InitDatabase(a.logger, a.config.DB, fs)
 }
 
 func (a *App) initLogger() {
@@ -131,7 +131,7 @@ func (a *App) initRepos() {
 	a.userCarsRepo = user_cars.NewRepository(a.db, a.logger)
 	a.userRepo = users.NewRepository(a.db, a.logger)
 	a.carRepo = cars.NewRepository(a.db, a.logger)
-	a.transferRepo = transfers.NewRepository(a.clientHTTP, a.logger)
+	a.transferRepo = transfers.NewRepository(a.rabbit, a.logger)
 	a.logger.Debug("repos created")
 }
 
@@ -142,8 +142,9 @@ func (a *App) initHandlers() {
 	a.logger.Debug("handlers created")
 }
 
+// TODO: переделать через интерфейсы (как в tx-service)
 func (a *App) initServices() {
-	a.carTradingService = car_trading.NewService(a.userRepo, a.carRepo, a.userCarsRepo, a.transferRepo, a.logger)
+	a.carTradingService = car_trading.NewService(a.userRepo, a.carRepo, a.userCarsRepo, a.transferRepo, a.chain, a.config.Extra.CarSystemWallet, a.logger)
 	a.userService = users_service.NewService(a.userRepo, a.logger)
 
 	a.logger.Debug("services created")
@@ -164,7 +165,7 @@ func (a *App) initHTTPClient() {
 
 func (a *App) initRabbit() {
 	var err error
-	a.rabbit, err = rabbit.NewRabbitMQ(urlRabbit)
+	a.rabbit, err = rabbit.NewRabbitMQ(a.config.Rabbit.Url, a.logger)
 	if err != nil {
 		a.logger.Fatal(err.Error())
 	}

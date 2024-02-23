@@ -23,6 +23,8 @@ func NewRepository(database *sqlx.DB, log log.Logger) Repository {
 	}
 }
 
+//TODO: обработка ошибок
+
 func (r Repository) Get(id int64) (domain.Car, error) {
 	var car domain.Car
 

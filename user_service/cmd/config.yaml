@@ -1,5 +1,5 @@
 db:
-  host: database
+  host: localhost
   port: 5432
   user: postgres
   password: postgres
@@ -11,3 +11,18 @@ db:
 
 http:
   port: 3000
+
+
+rabbit:
+#  url: amqp://guest:guest@rabbitmq:5672/
+  url: amqp://guest:guest@localhost:5672/
+
+
+chain:
+  chain_id: "one"
+  base_url: "localhost:9090"
+  keyring_type: "memory"
+  gas_limit: 200000
+
+extra:
+  car-system-wallet: cosmos1yhmva39w3q7uy593u8h58xaxmtglh6h94tq8ch

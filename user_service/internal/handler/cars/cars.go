@@ -29,6 +29,9 @@ func NewHandler(repo cars.Repository, service car_trading.Service, rabbit rabbit
 	}
 }
 
+// TODO: обработка ошибок
+// TODO: сервисный уровень
+
 func (h Handler) Get(ctx *fiber.Ctx) error {
 	token, err := responder.GetToken(ctx)
 	if err != nil {
@@ -38,6 +41,9 @@ func (h Handler) Get(ctx *fiber.Ctx) error {
 	if err := auth.VerifyToken(token); err != nil {
 		return responder.HandleError(ctx, errs.UnauthorizedError{Cause: err.Error()})
 	}
+
+	//TODO: сделать так везде
+	//auth.GetChatID(token)
 
 	id, err := ctx.ParamsInt("id")
 	if err != nil {

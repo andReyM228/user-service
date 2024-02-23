@@ -109,6 +109,9 @@ func (h Handler) Login(ctx *fiber.Ctx) error {
 
 // -----------------------------------------------------------------------
 
+// TODO: проверка обработки ошибок
+
+// TODO: сделать норм сервисный уровень
 func (h Handler) BrokerCreate(request []byte) error {
 	var req rabbit.RequestModel
 	if err := json.Unmarshal(request, &req); err != nil {

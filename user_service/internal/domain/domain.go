@@ -17,16 +17,17 @@ const (
 )
 
 type User struct {
-	ID        int
-	Name      string
-	Surname   string
-	Phone     string
-	Email     string
-	IsAdmin   bool `db:"is_admin"`
-	Password  string
-	ChatID    int64 `db:"chat_id"`
-	Cars      []Car
-	CreatedAt time.Time `db:"created_at"`
+	ID             int
+	Name           string
+	Surname        string
+	Phone          string
+	Email          string
+	AccountAddress string `db:"account_address"`
+	IsAdmin        bool   `db:"is_admin"`
+	Password       string
+	ChatID         int64 `db:"chat_id"`
+	Cars           []Car
+	CreatedAt      time.Time `db:"created_at"`
 }
 
 type Car struct {

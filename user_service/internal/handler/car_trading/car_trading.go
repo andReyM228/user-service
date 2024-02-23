@@ -1,6 +1,7 @@
 package car_trading
 
 import (
+	"github.com/andReyM228/lib/errs"
 	"user_service/internal/service/car_trading"
 
 	"github.com/andReyM228/lib/responder"
@@ -17,6 +18,8 @@ func NewHandler(carTrading car_trading.Service) Handler {
 	}
 }
 
+// TODO: передавать chat_id не как параметр, а в jwt токене, или переделать на rabbit
+
 func (h Handler) BuyCar(ctx *fiber.Ctx) error {
 	chatID, err := ctx.ParamsInt("chat_id")
 	if err != nil {
@@ -28,7 +31,12 @@ func (h Handler) BuyCar(ctx *fiber.Ctx) error {
 		return responder.HandleError(ctx, err)
 	}
 
-	if err := h.carTrading.BuyCar(int64(chatID), int64(carID)); err != nil {
+	txHash := ctx.Params("tx_hash")
+	if txHash == "" {
+		return responder.HandleError(ctx, errs.BadRequestError{Cause: "empty tx_hash"})
+	}
+
+	if err := h.carTrading.BuyCar(ctx.Context(), int64(chatID), int64(carID), txHash); err != nil {
 		return err
 	}
 
